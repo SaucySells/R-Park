@@ -1,0 +1,278 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script>
+        var pickedLot = "None";
+    </script>
+    <style>
+    .splash {
+    max-width: 800px;
+    max-height: 500px;
+    }
+    #splash2 > .splash {
+    border-radius: 50%;
+    }
+    #buttons {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    }
+    .ddown {
+    display: none;
+    }
+    .mostSpots {
+    margin-top: 30px;
+    }
+    </style>
+</head>
+
+<body>
+
+<div class="text-center">
+    <img src="./RPark.png" class="rounded">
+</div>
+
+<div class="text-center" id="buttons">
+<button id="spring" onclick="hide()">Big Springs Structure - Big Springs Road</button>
+<button id="lot6" onclick="hide()">Lot 6 - West Campus Drive</button>
+<button id="lot26" onclick="hide()">Lot 26 - 3375 Rustin Avenue</button>
+<button id="lot30" onclick="hide()">Lot 30 - UCR Lot 30</button>
+<button id="lot32" onclick="hide()">Lot 32 - 4297 Canyon Crest Drive</button>
+</div>
+
+<div class="text-center" id="splash1">
+    <img src="./splash1.png" class="splash">
+</div>
+
+<div class="text-center" id="splash2">
+    <img src="./splash2.jpg" class="splash">
+</div>
+
+
+<div id="timeChart"></div>
+<div class="dropdown float-center text-center ddown" style="padding-top: 20px">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    First class's time
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="#" onclick="calc(10)">10:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(11)">11:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(12)">12:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(13)">1:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(14)">2:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(15)">3:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(16)">4:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(17)">5:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(18)">6:00</a>
+      <a class="dropdown-item" href="#" onclick="calc(19)">7:00</a>
+  </div>
+</div>
+<div id="mostSpots" class="mostSpots text-center"></div>
+
+<script>
+function calc(input_number) {
+    //pickedLot has current lot chosen
+    //number has the time to consider
+    var pm = false;
+    var site = "http://127.0.0.1:5000/";
+    site += pickedLot;
+    $.getJSON(
+    site,
+    function(data) {
+    //data["Spaces"] gives us the spaces
+    //data["Time"] gives us the times
+    //index-aligned
+    let first_time = input_number - 1;
+    let leastSpots = 5000;
+    let mostSpots = 0;
+    let i = 0;
+    while (data["Time"][i] != first_time) {
+        i = i + 1;
+        console.log(i);
+    }
+    console.log("exit");
+    while (data["Time"][i] != input_number) {
+        if (data["Spaces"][i] > mostSpots) {
+            mostSpots = data["Spaces"][i];
+        }
+        if (data["Spaces"][i] < leastSpots) {
+            leastSpots = data["Spaces"][i];
+        }
+        i = i + 1;
+    }
+    console.log("Most spots is " + mostSpots);
+    console.log("Least spots is " + leastSpots);
+    if (leastSpots > mostSpots) {
+    var temp = mostSpots;
+    mostSpots = leastSpots;
+    leastSpots = temp;
+    }
+    //data["Time"][i]
+    //mostSpots
+    //leastSpots
+//    var end_time = input_number;
+//    var firstTime = "am";
+//    var secondTime = "am";
+
+//    if (input_number > 12) {
+//    secondTime = "pm";
+//    first_time = input_number - 12
+ //   firstTime = "am";
+  //  }
+//    if (input_number = 12) {
+//    end_time = 11;
+//    firstTime = "am";
+//    secondTime = "pm";
+//    }
+//
+//    if (first_time = 12) {
+//    firstTime = "pm";
+//    }
+//    if (first_time > 12) {
+//    firstTime = "pm";
+//    }
+//
+//    first_time = end_time - 1;
+//    if(end_time == 1) {
+//    first_time = 12
+//    firstTime = "pm"
+//    }
+
+    $("#mostSpots").html("The most amount of spots within the 1-hour range you selected is " + mostSpots +".");
+    });
+}
+
+function hide() {
+    $("#splash1").hide();
+    $("#splash2").hide();
+    $(".ddown").show();
+}
+$("#spring").click(function() {
+$.getJSON(
+    "http://127.0.0.1:5000/BigSprings",
+    function(data) {
+    populate("Big Springs Structure", data["Spaces"], data["Time"]);
+    });
+    pickedLot = "BigSprings";
+    console.log(pickedLot);
+});
+
+$("#lot6").click(function() {
+$.getJSON(
+    "http://127.0.0.1:5000/Lot6",
+    function(data) {
+    populate("Lot 6", data["Spaces"], data["Time"]);
+    });
+    pickedLot = "Lot6";
+    console.log(pickedLot);
+});
+
+$("#lot26").click(function() {
+$.getJSON(
+    "http://127.0.0.1:5000/Lot26",
+    function(data) {
+    populate("Lot 26", data["Spaces"], data["Time"]);
+    });
+    pickedLot = "Lot26";
+    console.log(pickedLot);
+});
+
+$("#lot30").click(function() {
+$.getJSON(
+    "http://127.0.0.1:5000/Lot30",
+    function(data) {
+    populate("Lot 30", data["Spaces"], data["Time"]);
+    });
+    pickedLot = "Lot30";
+    console.log(pickedLot);
+});
+
+$("#lot32").click(function() {
+$.getJSON(
+    "http://127.0.0.1:5000/Lot32",
+    function(data) {
+    populate("Lot 32", data["Spaces"], data["Time"]);
+    });
+    pickedLot = "Lot32";
+    console.log(pickedLot);
+});
+
+function populate(lot, spaces, time) {
+//console.log(spaces);
+//console.log(time);
+var array = new Array(spaces.length);
+var i;
+for (i = 0; i < spaces.length; ++i) {
+    array[i] = new Array(2);
+    //console.log(time[i]);
+    array[i][0] = parseFloat(time[i]);
+    array[i][1] = parseFloat(spaces[i]);
+    //console.log(array[i][0]);
+}
+Highcharts.chart('timeChart', {
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: 'Parking lot availability for ' + lot
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+            },
+            xAxis: {
+                title: {
+                    text: 'Time (Hours)'
+                }
+            },
+            yAxis: {
+            min: 0,
+                title: {
+                    text: 'Parking Spaces'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 3
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+
+            series: [{
+                type: 'area',
+                name: 'Spaces Available',
+                data: array
+            }]
+        });
+}
+</script>
+</body>
+</html>
